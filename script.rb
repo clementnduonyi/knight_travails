@@ -1,68 +1,116 @@
-class Board
-
-    def initialize
-        #knight_moves
-    end
-    
-end
+require_relative "board"
 
 class KnightMove
-    attr_accessor :open, :square, :root
+    attr_accessor :square, :token
 
-    TRAVAILS = [[1, 2], [-2, -1], [-1, 2], [2, -1],[1, -2], [-2, 1], [-1, -2], [2, 1]]
-    
-   
-
-    def initialize(square = [1, 0], root = nil)
+    def initialize( board, square = [rand(8), rand(8), token = "♞"])
+        @board = board
         @square = square
-        @root = root
-        @open = open_square(@square)
+        @token = token
+        update_square
+
     end
 
-    def trail(array)
-        @square = array
-        @open = open_square(@square)
+    def update_square
+        @board.knight_trail(self)
     end
 
-    def open_square(array)
-        TRAVAILS.map do |trail| 
-            trails = [trail[0] + array[0], trail[1] + array[1]]
-            trails.keep_if {|trail| valid?(trail)}
+    def creat_indicators
+        @board.point_indicator(creat_path)
+    end
+
+    def creat_path(spot = @square)
+        path = Navigator.new(spot, @board.aim)
+        closest_path = path.find
+        pathway(closest_path)
+        return closest_path
+    end
+
+    def pathway(path)
+        path = change_path(path)
+        trail = path.shift
+        puts "#{@token} start #{trail[0]}#{trail[1]}"
+        until path.empty?
+            trail = path.shift 
+            puts "-> #{trail[0]}#{trail[1]}"
         end
+        puts " It's Over"
     end
 
-    def valid?(array)
-        true if array[0].between?(1, 8) && array[1].between?(1, 8)
-       
+    def change_path(path)
+        changed = []
+        path.each {|a| changed.push([(a[1] + 65).chr, 8 - a[0]])}
+        changed << [(@board.aim[1] + 65).chr, 8 - @board.aim[0]]
+        return changed
     end
-
-
-    def knight_moves(start = [1, 2], finish = rand_square)
-        unless Board.valid?(start) && Board.valid?(finish)
-            return
-        end
-        @queue = [KnightMove.new(start)]
-        until @queue[0].square == finish
-            @queue[0].open_square.each do |trail|
-                @queue << KnightMove.new(trail, @queue[0])
-                @queue.shift
-            end
-        end
-
-        @tracking = [@queue[0]]
-        while @tracking[0].root
-            @tracking.unshift(@tracking[0].root)
-            puts "You made it from #{start} to #{finish} in #{@tracking.length - 1} attempts! Here is your path:"
-            @tracking.each {|track| p track.square}
-        end
-    end
-    knight_moves
-
-    def rand_square
-        [rand(8), rand(8)]
-    end
-
 end
 
-#play = Board.new
-#play.
+class Navigator
+    attr_accessor :root, :square
+
+    TRAVAILS = [[-1,-2], [-2,-1], [-2,1], [-1,2], [1,-2], [2,-1], [2,1], [1,2]]
+
+    def initialize(square, aim, queue = [], root = nil)
+        @aim = aim
+        @square = square
+        @queue = queue
+        @root = root
+        @valid = valid_moves(square)
+    end
+
+    def find
+        if @valid.include?(@aim)
+            return root_tag(self).reverse
+        end
+        @valid.each do |spot|
+            @queue << Navigator.new(spot, @aim, @queue, self)
+        end
+        box = @queue.shift
+        box.find
+    end
+
+    def valid_moves(square = @square)
+        valid = []
+        moves = TRAVAILS.map{|move| [(move[0] + square[0]),(move[1] + square[1])]}
+        moves.keep_if do |move|
+            if open_space?(move)
+                valid.push(move)
+            end
+            valid
+        end
+    end
+
+    def open_space?(square = @square)
+        res = false
+        if square.length == 2
+            res = true
+        elsif square[0] <  0 || square[0] > 7 || square[1] < 0 || square[1] > 7
+            res = false
+        end
+        res
+    end
+
+
+    def root_tag(node, path = [])
+        path << node.square
+
+        if node.root.nil?
+            return path
+        end
+
+        return root_tag(node.root, path)
+    end
+
+    
+end
+
+    board = Board.new
+    knight = KnightMove.new(board)
+    knight.creat_indicators
+    board.pretty_print
+    
+    
+
+   
+
+
