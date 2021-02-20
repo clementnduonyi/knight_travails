@@ -22,20 +22,33 @@ class KnightMove
     def creat_path(spot = @square)
         path = Navigator.new(spot, @board.aim)
         closest_path = path.find
-        pathway(closest_path)
+        knight_moves(closest_path)
         return closest_path
     end
 
-    def pathway(path)
+    def knight_moves(path)
         path = change_path(path)
         trail = path.shift
-        puts "#{@token} start #{trail[0]}#{trail[1]}"
+        puts
+        puts "#{@token} Starts from #{trail[0]} #{trail[1]} and finishes at #{path.last[0]} #{path.last[1]} in #{path.length-1} move(s)! See your path below:"
         until path.empty?
-            trail = path.shift 
-            puts "-> #{trail[0]}#{trail[1]}"
+            trail = path.shift
+            
+            puts "-> #{trail[0]}  #{trail[1]}"
         end
-        puts " It's Over"
+            
+
+        puts
+
+        puts "Finish"
+
+        puts
+
+       
+        
+
     end
+
 
     def change_path(path)
         changed = []
@@ -76,7 +89,7 @@ class Navigator
             if open_space?(move)
                 valid.push(move)
             end
-            valid
+            #valid
         end
     end
 

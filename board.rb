@@ -1,5 +1,4 @@
 #require_relative "script"
-
 class Board
     attr_accessor :aim
 
@@ -32,6 +31,7 @@ class Board
 
     
     def pretty_print
+        puts "SUMMARY"
         puts "   ┬───┬───┬───┬───┬───┬───┬───┬───┐"
         @board.each_with_index do |row, i|
             print " #{8 - i} │"
