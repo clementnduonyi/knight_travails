@@ -1,13 +1,13 @@
 # knight_travails
 
-#INTRO
+# INTRO
 This project seeks to leverage on the concept of dept first (DFS) and breath first search (BFS) algorithms on a real problem.
 
 It tries to use a data structure that’s similar (but not identical) to a binary tree.
 
 A knight in chess can move to any square on the standard 8x8 chess board from any other square on the board, given enough turns. Its basic move is two steps forward and one step to the side. It can face any direction.
 
-#THE PROJECT
+# THE PROJECT
 
 The task is to build a function, knight_moves that shows the simplest possible way to get from one square to another by outputting all squares the knight will stop on along the way.
 
